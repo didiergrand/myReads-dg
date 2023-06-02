@@ -1,3 +1,5 @@
+import * as BooksAPI from "../BooksAPI";
+
 const Book = ({ book, bookList, setBookList }) => {
   const onShelfChange = (book, shelf) => {
     const updatedBooks = bookList.map((sBook) => {
@@ -7,7 +9,8 @@ const Book = ({ book, bookList, setBookList }) => {
       return sBook;
     });
     setBookList(updatedBooks);
-    localStorage.setItem('bookList', JSON.stringify(updatedBooks));   
+    // update book with new shelf
+    BooksAPI.update(book, shelf);
   };
   return (
     <div className="book">

@@ -13,17 +13,11 @@ function App() {
   const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
   const [noShelfBooks, setNoShelfBooks] = useState([]);
 
-  // Récupérer la liste des livres depuis le localStorage
+  // Récupérer la liste des livres depuis l'API 
   useEffect(() => {
-    const storedBookList = JSON.parse(localStorage.getItem('bookList'));
-    if (storedBookList) {
-      setBookList(storedBookList);
-    } else {
-      BooksAPI.getAll().then((books) => {
-        setBookList(books);
-        localStorage.setItem('bookList', JSON.stringify(books));
-      });
-    }
+    BooksAPI.getAll().then((books) => {
+      setBookList(books);
+    });
   }, []);
   // Filtrer les livres selon leur étagère
   useEffect(() => {
