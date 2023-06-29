@@ -1,17 +1,14 @@
 import * as BooksAPI from "../BooksAPI";
 
 const Book = ({ book, bookList, setBookList }) => {
-  const onShelfChange = (book, shelf) => {
-    const updatedBooks = bookList.map((sBook) => {
-      if (book.id === sBook.id) {
-        sBook.shelf = shelf;
-      }
-      return sBook;
+
+const onShelfChange = (book, shelf) => {
+    BooksAPI.update(book, shelf).then((response) => {
+      book.shelf = shelf;
+      setBookList([...bookList.filter((b) => b.id !== book.id), book]);
     });
-    setBookList(updatedBooks);
-    // update book with new shelf
-    BooksAPI.update(book, shelf);
-  };
+};
+
   return (
     <div className="book">
       <div className="book-top">
@@ -23,12 +20,13 @@ const Book = ({ book, bookList, setBookList }) => {
             backgroundImage: `url(${book.imageLinks.thumbnail})`,
           }}
         ></div>
+
         <div className="book-shelf-changer">
           <select
             onChange={(e) => onShelfChange(book, e.target.value)}
-            value={book.shelf}
+            value={book.shelf || 'none'}
           >
-            <option value="none" disabled>
+            <option disabled>
               Move to...
             </option>
             <option value="currentlyReading">Currently Reading</option>

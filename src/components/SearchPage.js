@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import * as BooksAPI from "../BooksAPI";
+import React, { useState, useEffect } from "react";
 import Book from "./Book";
 import { Link } from "react-router-dom";
+import useDebounce from "../utils/useDebounce";
 
 const SearchPage = ({
   bookList,
@@ -8,24 +10,27 @@ const SearchPage = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const debouncedSearchQuery = useDebounce(searchTerm, 500); // Debounce search query by 500ms
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      BooksAPI.search(debouncedSearchQuery, 20).then((books) => {
+        if (books.error) {
+            setSearchResults([]);
+        } else {  
+            setSearchResults(books);
+        }
+      })
+      .catch((e) => {
+        console.log("error:", e);
+      });
+    } else {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchQuery]);
 
-  const searchBook = useCallback((term) => {
-    const results = bookList.filter((book) =>
-        book.shelf === "none" &&
-        (book.title.toLowerCase().includes(term.toLowerCase())
-        || book.authors.toString().toLowerCase().includes(term.toLowerCase())
-        || book.industryIdentifiers[0].identifier.toString().toLowerCase().includes(term.toLowerCase()))
-    );
-    setSearchResults(results);
-}, [bookList]);
-
-useEffect(() => {
-    searchBook(searchTerm);
-}, [bookList, searchTerm, searchBook]);
 
 const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
-    searchBook(event.target.value);
 };
   return (
     <div className="search-books">

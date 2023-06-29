@@ -1,13 +1,24 @@
 import Book from "./Book";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 
 const BookList = ({
-    currentlyReadingBooks,
-    wantToReadBooks,
-    readBooks,
     bookList,
     setBookList
 }) => {
+  const [readBooks, setReadBooks] = useState([]);
+  const [wantToReadBooks, setWantToReadBooks] = useState([]);
+  const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
+  // Filtrer les livres selon leur étagère
+  useEffect(() => {
+    const read = bookList.filter((book) => book.shelf === "read");
+    const wantToRead = bookList.filter((book) => book.shelf === "wantToRead");
+    const currentlyReading = bookList.filter((book) => book.shelf === "currentlyReading");
+    setReadBooks(read);
+    setWantToReadBooks(wantToRead);
+    setCurrentlyReadingBooks(currentlyReading);
+  }, [bookList]);
   return (
     <div className="list-books">
       <div className="list-books-title">
