@@ -56,6 +56,7 @@ const handleSearchTermChange = (event) => {
               <div className="bookshelf-books">
                 <ol className="books-grid">
                   {searchResults.map((book) => {
+
                     return (
                       <li key={book.id}>
                         <Book book={book} bookList={bookList} setBookList={setBookList} />

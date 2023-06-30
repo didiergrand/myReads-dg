@@ -1,17 +1,22 @@
 import * as BooksAPI from "../BooksAPI";
 
 const Book = ({ book, bookList, setBookList }) => {
+  // Update the book's shelf
+  const onShelfChange = (book, shelf) => {
+      BooksAPI.update(book, shelf).then((response) => {
+        book.shelf = shelf;
+        setBookList([...bookList.filter((b) => b.id !== book.id), book]);
+      });
+  };
 
-const onShelfChange = (book, shelf) => {
-    BooksAPI.update(book, shelf).then((response) => {
-      book.shelf = shelf;
-      setBookList([...bookList.filter((b) => b.id !== book.id), book]);
-    });
-};
+  // Find the book's shelf from the bookList
+  const bookInList = bookList.find((b) => b.id === book.id);
+  const shelf = bookInList ? bookInList.shelf : 'none';
 
   return (
     <div className="book">
       <div className="book-top">
+        {book.imageLinks?.thumbnail && (
         <div
           className="book-cover"
           style={{
@@ -20,12 +25,9 @@ const onShelfChange = (book, shelf) => {
             backgroundImage: `url(${book.imageLinks.thumbnail})`,
           }}
         ></div>
-
+        )}
         <div className="book-shelf-changer">
-          <select
-            onChange={(e) => onShelfChange(book, e.target.value)}
-            value={book.shelf || 'none'}
-          >
+         <select onChange={(e) => onShelfChange(book, e.target.value)} value={shelf}>
             <option disabled>
               Move to...
             </option>
